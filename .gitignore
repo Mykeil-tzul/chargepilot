@@ -1,26 +1,4 @@
-venv/
-# python
+.env
+.venv/
 __pycache__/
-*.pyc
-.venv/
-venv/
-
-# env
-.env
-.env.*
-
-# data & db artifacts
-data/
-db/
-*.parquet
-*.duckdb
-
-# streamlit cache
-.streamlit/
-data/bronze/
-data/silver/
-data/gold/
-db/
-.venv/
-venv/
-.env
+.DS_Store

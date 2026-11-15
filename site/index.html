@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Plan an EV road trip, estimate charging stops, and compare energy and ownership costs.">
+<title>ChargePilot · EV Planning Studio</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+<script defer src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module" src="app.mjs"></script>
+</head><body>
+<header><a class="brand" href="./"><span aria-hidden="true">↯</span> ChargePilot</a><nav aria-label="Navigation"><a href="#trip">Trip Planner</a><a href="#sim">Range Simulator</a><a href="#garage">Garage</a><a href="#ownership">Ownership</a></nav></header>
+<main>
+<section class="hero"><div class="hero-copy">
+<p class="eyebrow">ELECTRIC VEHICLE TRIP PLANNER</p><h1>Go electric.<br><span>Know where to stop.</span></h1>
+<p>Compare charging stops, see your estimated battery at arrival, and find out how speed, weather, and load can change your range.</p>
+<div class="actions"><a class="button primary" href="#trip">Plan a road trip</a><a class="button ghost" href="#sim">Simulate range</a></div>
+</div><figure><img src="assets/model-y.jpg" alt="White Tesla Model Y in a parking area"><figcaption>Tesla Model Y · <a href="https://commons.wikimedia.org/wiki/File:2022_Tesla_Model_Y_Long_Range_AWD_Front.jpg">Vauxford</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></figcaption></figure></section>
+<section id="trip" class="panel">
+<div class="heading"><div><h2>Trip planner</h2><p>Choose a route, your starting battery, and what to optimize for.</p></div><span class="pill" id="data-status" role="status">Loading station catalog</span></div>
+<form id="trip-form" class="trip-grid">
+<label>From<select id="origin"></select></label><label>To<select id="destination"></select></label>
+<label>Vehicle<select id="vehicle"></select></label>
+<label>Priority<select id="preference"><option value="time">Less time charging</option><option value="cost">Lower estimated charging cost</option></select></label>
+<label>Starting battery (%)<input id="start" type="number" min="5" max="100" value="80" required></label>
+<label>Minimum reserve (%)<input id="reserve" type="number" min="5" max="40" value="15" required></label>
+<label>Base fast-charge rate ($/kWh)<input id="price" type="number" min="0" max="2" step=".01" value=".42" required></label>
+<button class="primary" id="run" type="submit" disabled>Calculate trip</button>
+</form>
+<p class="caption">Trip energy uses the speed, temperature, and load from the range simulator. Standard mode routes between city centers. The map uses catalog listings and modeled prices, speeds, and detours.</p>
+<p id="trip-status" role="status"></p>
+<div class="metrics"><article><span>Road distance</span><strong id="miles">—</strong></article><article><span>Charging stops</span><strong id="stop-count">—</strong></article><article><span>Estimated stops + detours</span><strong id="extra">—</strong></article><article><span>Arrival battery</span><strong id="arrival">—</strong></article><article><span>Estimated paid at stops</span><strong id="paid">—</strong></article></div>
+<div class="mapsplit">
+<div id="station-map"><div class="maphead"><h3>Charging map</h3><div class="actions"><label>Network<select id="network"><option value="">All networks</option></select></label><label>Connector<select id="connector"><option value="">Selected vehicle</option><option>NACS</option><option>CCS</option><option>CHAdeMO</option><option value="all">Any connector</option></select></label></div></div><div id="map" aria-label="Road route and charging station map"></div><p id="map-summary" class="caption"></p></div>
+<div class="itinerary"><h3>Recommended itinerary</h3><p id="road-time" class="caption"></p><div id="stops"></div></div>
+</div></section>
+<section id="sim" class="panel">
+<div class="heading"><div><h2>Range simulator</h2><p>See which conditions use more energy before recalculating your trip.</p></div></div>
+<div class="sim-grid"><div class="sliders">
+<label>Highway speed <output id="speed-label"></output><input id="speed" type="range" min="40" max="85" value="65"></label>
+<label>Outside temperature <output id="temp-label"></output><input id="temp" type="range" min="-10" max="115" value="70"></label>
+<label>Passengers and luggage <output id="load-label"></output><input id="load" type="range" min="0" max="950" step="25" value="250"></label></div>
+<div class="sim-result"><p>Estimated range before reserve</p><strong id="range">—</strong><p id="consumption" class="caption"></p><div class="bars" id="range-bars"></div></div></div>
+</section>
+<div class="lower-grid">
+<section class="panel" id="garage"><h2>My Garage</h2><p class="caption">Save an editable vehicle scenario on this browser.</p>
+<form id="garage-form" class="garage-grid"><label>Scenario name<input name="name" required maxlength="50" placeholder="My EV"></label>
+<label>Usable battery (kWh)<input name="capacity" required type="number" min="10" max="250" step=".1"></label>
+<label>Efficiency (Wh/mi)<input name="wh" required type="number" min="100" max="1000"></label>
+<label>Peak DC charging power (kW)<input name="peak" type="number" required min="5" max="400"></label>
+<label>Connector<select name="plug"><option>NACS</option><option>CCS</option><option>CHAdeMO</option></select></label>
+<label class="check"><input name="tesla" type="checkbox"> Tesla vehicle</label><button class="primary">Save vehicle</button><button type="button" id="remove-vehicle" class="ghost" disabled>Remove saved vehicle</button></form><p id="garage-status" role="status"></p>
+</section>
+<section class="panel" id="cost"><h2>Cost comparison</h2><p class="caption">Compare energy and fuel for the route. Scroll down to compare annual running costs.</p>
+<div class="garage-grid"><label>Home electricity ($/kWh)<input id="home-price" type="number" min="0" max="2" step=".01" value=".16"></label><label>Gasoline ($/gal)<input id="gas" type="number" min="0" max="20" step=".01" value="3.25"></label>
+<label>Gas vehicle (mpg)<input id="mpg" type="number" min="5" max="150" value="30"></label><label>Annual miles<input id="annual-miles" type="number" min="0" max="1000000" value="12000"></label>
+<label>Home charging share (%)<input id="home-share" type="number" min="0" max="100" value="80"></label>
+<label>Annual EV fixed costs ($)<input id="ev-fixed" type="number" min="0" max="100000" value="1800"></label>
+<label>Annual gas fixed costs ($)<input id="gas-fixed" type="number" min="0" max="100000" value="1500"></label></div>
+<div id="cost-results"></div>
+</section>
+</div>
+<section class="panel ownership" id="ownership"><div><h2>Ownership dashboard</h2><p class="caption">Record charging expenses and distance driven. Your entries stay on this device.</p>
+<form id="log-form" class="garage-grid"><label>Miles driven<input name="miles" type="number" min="0" max="100000" step=".1" required></label><label>Energy billed (kWh)<input name="kwh" type="number" min=".1" max="100000" step=".1" required></label><label>Amount paid ($)<input name="cost" type="number" min="0" max="100000" step=".01" required></label><button class="primary">Add record</button></form>
+<p id="log-status" role="status"></p><p id="log-totals"></p><ul id="records"></ul><div class="actions"><button class="ghost" id="save-trip" type="button" disabled>Save current trip estimate</button><button class="ghost" id="export" type="button" disabled>Export charging CSV</button></div><ul id="saved-trips"></ul></div>
+<figure><img src="assets/charging.jpg" alt="Multiple electric vehicle fast chargers beside parking spaces"><figcaption><a href="https://commons.wikimedia.org/wiki/File:Tesla_charging_station.jpg">Connor Williams</a> · <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a></figcaption></figure></section>
+</main>
+<footer>ChargePilot · U.S. trip estimates · <a href="https://afdc.energy.gov/stations/">AFDC charger catalog</a> · <a href="https://github.com/Mykeil-tzul/chargepilot">Code and methods</a></footer>
+</body></html>

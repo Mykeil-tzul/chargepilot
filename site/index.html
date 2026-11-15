@@ -8,7 +8,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module" src="app.mjs"></script>
 </head><body>
-<header><a class="brand" href="./"><span aria-hidden="true">↯</span> ChargePilot</a><nav aria-label="Navigation"><a href="#trip">Trip Planner</a><a href="#sim">Range Simulator</a><a href="#garage">Garage</a><a href="#ownership">Ownership</a></nav></header>
+<header><a class="brand" href="./"><span aria-hidden="true">↯</span> ChargePilot</a><nav aria-label="Navigation"><a href="#trip">Trip Planner</a><a href="#sim">Range Simulator</a><a href="#garage">Garage</a><a href="#ownership">Ownership</a><a href="#model-y-film">Model Y film</a></nav></header>
 <main>
 <section class="hero"><div class="hero-copy">
 <p class="eyebrow">ELECTRIC VEHICLE TRIP PLANNER</p><h1>Go electric.<br><span>Know where to stop.</span></h1>
@@ -63,6 +63,11 @@
 <form id="log-form" class="garage-grid"><label>Miles driven<input name="miles" type="number" min="0" max="100000" step=".1" required></label><label>Energy billed (kWh)<input name="kwh" type="number" min=".1" max="100000" step=".1" required></label><label>Amount paid ($)<input name="cost" type="number" min="0" max="100000" step=".01" required></label><button class="primary">Add record</button></form>
 <p id="log-status" role="status"></p><p id="log-totals"></p><ul id="records"></ul><div class="actions"><button class="ghost" id="save-trip" type="button" disabled>Save current trip estimate</button><button class="ghost" id="export" type="button" disabled>Export charging CSV</button></div><ul id="saved-trips"></ul></div>
 <figure><img src="assets/charging.jpg" alt="Multiple electric vehicle fast chargers beside parking spaces"><figcaption><a href="https://commons.wikimedia.org/wiki/File:Tesla_charging_station.jpg">Connor Williams</a> · <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a></figcaption></figure></section>
+<section class="panel" id="model-y-film">
+<div class="heading"><div><h2>The Model Y on the road</h2><p>See the car behind the default road-trip example in Tesla’s official Model Y film.</p></div></div>
+<iframe title="The New Model Y by Tesla" src="https://www.youtube-nocookie.com/embed/Jt7DqX2AlNo" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen style="display:block;width:min(100%,760px);aspect-ratio:16/9;border:0;border-radius:14px"></iframe>
+<p><a href="https://www.youtube.com/watch?v=Jt7DqX2AlNo">Watch on YouTube ↗</a></p>
+</section>
 </main>
 <footer>ChargePilot · U.S. trip estimates · <a href="https://afdc.energy.gov/stations/">AFDC charger catalog</a> · <a href="https://github.com/Mykeil-tzul/chargepilot">Code and methods</a></footer>
 </body></html>

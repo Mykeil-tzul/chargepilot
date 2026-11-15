@@ -39,3 +39,4 @@ Automated tests cover battery math, charging taper, compatible connectors, unrea
 - Road routing and map data from [OSRM](https://project-osrm.org/) and [OpenStreetMap](https://www.openstreetmap.org/copyright). Tiles by [CARTO](https://carto.com/attributions). The map uses Leaflet.
 - Tesla Model Y photo by [Vauxford](https://commons.wikimedia.org/wiki/File:2022_Tesla_Model_Y_Long_Range_AWD_Front.jpg), resized from the original under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
 - Charging site photo by [Connor Williams](https://commons.wikimedia.org/wiki/File:Tesla_charging_station.jpg), resized from the original under [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/).
+- Vehicle film: [The New Model Y](https://www.youtube.com/watch?v=Jt7DqX2AlNo) from Tesla. The film is a visual reference. Trip and range estimates use the editable vehicle assumptions in the app.
